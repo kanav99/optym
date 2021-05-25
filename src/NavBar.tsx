@@ -14,6 +14,7 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
+  propNames,
 } from '@chakra-ui/react';
 import {
   HamburgerIcon,
@@ -21,12 +22,19 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@chakra-ui/icons';
+import { ColorModeSwitcher } from './ColorModeSwitcher';
+import { Logo } from './Logo';
 
-export default function WithSubnavigation() {
+interface Prop {
+  onPrimary: () => void;
+  onSecondary: () => void;
+}
+
+export default function WithSubnavigation(prop: Prop) {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
-    <Box>
+    <Box zIndex={10000}>
       <Flex
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
@@ -35,7 +43,7 @@ export default function WithSubnavigation() {
         px={{ base: 4 }}
         borderBottom={1}
         borderStyle={'solid'}
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
+        borderColor={useColorModeValue('gray.200', 'gray.700')}
         align={'center'}
       >
         <Flex
@@ -53,14 +61,15 @@ export default function WithSubnavigation() {
           />
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          <Text
+          {/* <Text
             as="em"
             textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
             fontFamily={'heading'}
             color={useColorModeValue('gray.800', 'white')}
           >
             Stonk Wars
-          </Text>
+          </Text> */}
+          <Logo />
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
             <DesktopNav />
@@ -73,28 +82,40 @@ export default function WithSubnavigation() {
           direction={'row'}
           spacing={6}
         >
+          <ColorModeSwitcher />
           <Button
             as={'a'}
             fontSize={'sm'}
             fontWeight={400}
             variant={'link'}
-            href={'#'}
+            onClick={prop.onSecondary}
           >
-            Sign Out
+            Leaderboard
           </Button>
           {/* <Button
             display={{ base: 'none', md: 'inline-flex' }}
             fontSize={'sm'}
             fontWeight={600}
-            color={'white'}
-            bg={'pink.400'}
+            // color={'white'}
+            bg={'green.400'}
             href={'#'}
             _hover={{
-              bg: 'pink.300',
+              bg: 'green.300',
             }}
+          > */}
+          <Button
+            colorScheme={'green'}
+            bg={'green.400'}
+            fontSize={'sm'}
+            fontWeight={600}
+            //   rounded={'full'}
+            _hover={{
+              bg: 'green.500',
+            }}
+            onClick={prop.onPrimary}
           >
-            Sign Up
-          </Button> */}
+            Submit a solution
+          </Button>
         </Stack>
       </Flex>
 
@@ -295,12 +316,8 @@ const NAV_ITEMS: Array<NavItem> = [
   //     },
   //   ],
   // },
-  {
-    label: 'See Open Contests',
-    href: '#',
-  },
-  {
-    label: 'Start an Auction',
-    href: '#',
-  },
+  // {
+  //   label: 'Leaderboard',
+  //   href: '#',
+  // },
 ];

@@ -27,6 +27,8 @@ import {
   Code,
   Link,
   TableCaption,
+  Flex,
+  VStack,
 } from '@chakra-ui/react';
 
 import { useState, useEffect, useRef } from 'react';
@@ -66,11 +68,20 @@ function Counter(props) {
   );
 }
 
+const loggedIn = false;
+
 function App() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const myRef = useRef(null);
   const executeScroll = () =>
     myRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const [code, setCode] = useState('');
+  useEffect(() => {
+    fetch('/challenge.js')
+      .then(resp => resp.text())
+      .then(t => setCode(t.trim()));
+  }, []);
 
   return (
     <ChakraProvider theme={theme}>
@@ -93,7 +104,7 @@ function App() {
               <Text as={'span'} color={'green.400'}>
                 {config.funderName}
               </Text>{' '}
-              is organizing a Optym contest worth <br />
+              is organizing an Optym contest worth <br />
               <Text as={'span'} color={'green.400'}>
                 {config.wager} ETH
               </Text>
@@ -105,9 +116,10 @@ function App() {
               {new Date(config.endingTime * 1000).toUTCString()} wins 0.1 ETH.
             </Text>
             <Counter ending={config.endingTime} />
+            {/* Code */}
             <Box textAlign="left" borderRadius={5}>
               <SyntaxHighlighter language="javascript" style={docco}>
-                {config.challengeCode}
+                {code}
               </SyntaxHighlighter>
             </Box>
             <Box>
@@ -134,72 +146,85 @@ function App() {
         </Container>
 
         {/* Leaderboard Table */}
-        <Heading paddingBottom={5}>Leaderboard</Heading>
-        <Table>
-          <Thead>
-            <Tr>
-              <Th isNumeric>Rank</Th>
-              <Th>Name</Th>
-              <Th isNumeric>Input</Th>
-              <Th isNumeric>Output</Th>
-              <Th>Submission time</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              <Td isNumeric>1</Td>
-              <Td>Kanav Gupta</Td>
-              <Td isNumeric>5</Td>
-              <Td isNumeric>2898</Td>
-              <Td>25 May 2021 17:40</Td>
-            </Tr>
-            <Tr>
-              <Td isNumeric>2</Td>
-              <Td>Kanav Gupta</Td>
-              <Td isNumeric>5</Td>
-              <Td isNumeric>2898</Td>
-              <Td>25 May 2021 17:40</Td>
-            </Tr>
-            <Tr>
-              <Td isNumeric>3</Td>
-              <Td>Kanav Gupta</Td>
-              <Td isNumeric>5</Td>
-              <Td isNumeric>2898</Td>
-              <Td>25 May 2021 17:40</Td>
-            </Tr>
-            <Tr>
-              <Td isNumeric>4</Td>
-              <Td>Kanav Gupta</Td>
-              <Td isNumeric>5</Td>
-              <Td isNumeric>2898</Td>
-              <Td>25 May 2021 17:40</Td>
-            </Tr>
-            <Tr>
-              <Td isNumeric>5</Td>
-              <Td>Kanav Gupta</Td>
-              <Td isNumeric>5</Td>
-              <Td isNumeric>2898</Td>
-              <Td>25 May 2021 17:40</Td>
-            </Tr>
-            <Tr>
-              <Td isNumeric>6</Td>
-              <Td>Kanav Gupta</Td>
-              <Td isNumeric>5</Td>
-              <Td isNumeric>2898</Td>
-              <Td>25 May 2021 17:40</Td>
-            </Tr>
-          </Tbody>
-        </Table>
+        <Box p={5} m={10} borderRadius={5} borderWidth={1} textAlign="center">
+          <Heading paddingBottom={5}>Leaderboard</Heading>
+          <Box overflowX={{ base: 'auto' }}>
+            <Table>
+              <Thead>
+                <Tr>
+                  <Th isNumeric>Rank</Th>
+                  <Th>Name</Th>
+                  <Th isNumeric>Input</Th>
+                  <Th isNumeric>Output</Th>
+                  <Th>Submission time</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                <Tr>
+                  <Td isNumeric>1</Td>
+                  <Td>Kanav Gupta</Td>
+                  <Td isNumeric>5</Td>
+                  <Td isNumeric>2898</Td>
+                  <Td>25 May 2021 17:40</Td>
+                </Tr>
+                <Tr>
+                  <Td isNumeric>2</Td>
+                  <Td>Kanav Gupta</Td>
+                  <Td isNumeric>5</Td>
+                  <Td isNumeric>2898</Td>
+                  <Td>25 May 2021 17:40</Td>
+                </Tr>
+                <Tr>
+                  <Td isNumeric>3</Td>
+                  <Td>Kanav Gupta</Td>
+                  <Td isNumeric>5</Td>
+                  <Td isNumeric>2898</Td>
+                  <Td>25 May 2021 17:40</Td>
+                </Tr>
+                <Tr>
+                  <Td isNumeric>4</Td>
+                  <Td>Kanav Gupta</Td>
+                  <Td isNumeric>5</Td>
+                  <Td isNumeric>2898</Td>
+                  <Td>25 May 2021 17:40</Td>
+                </Tr>
+                <Tr>
+                  <Td isNumeric>5</Td>
+                  <Td>Kanav Gupta</Td>
+                  <Td isNumeric>5</Td>
+                  <Td isNumeric>2898</Td>
+                  <Td>25 May 2021 17:40</Td>
+                </Tr>
+                <Tr>
+                  <Td isNumeric>6</Td>
+                  <Td>Kanav Gupta</Td>
+                  <Td isNumeric>5</Td>
+                  <Td isNumeric>2898</Td>
+                  <Td>25 May 2021 17:40</Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </Box>
+          <Box alignItems="center" marginTop={3}>
+            <Link>{'<<'}</Link>
+            <Link marginLeft={4}>1</Link>
+            <Link marginLeft={4}>2</Link>
+            <Link marginLeft={4}>3</Link>
+            <Link marginLeft={4}>{'>>'}</Link>
+          </Box>
+        </Box>
 
-        {/* Funder */}
-        <Heading py={10}>About Competition</Heading>
-        <Stack
-          direction="row"
-          spacing="4"
-          align="center"
-          justify="space-between"
-        >
-          <Box p={5} m={10} minWidth={'50%'} borderRadius={5} borderWidth={1}>
+        {/* Funder Info */}
+        <Flex flexWrap="wrap">
+          <Box
+            p={5}
+            minWidth={'40%'}
+            m={10}
+            borderRadius={5}
+            borderWidth={1}
+            flexGrow={1}
+          >
+            <Heading py={10}>About Competition</Heading>
             <Table variant="simple">
               <TableCaption>
                 Powered by <Link>Optym</Link>
@@ -232,7 +257,78 @@ function App() {
               </Tbody>
             </Table>
           </Box>
-        </Stack>
+          {/* Your Submissions */}
+          <Box
+            p={5}
+            minWidth="40%"
+            m={10}
+            borderRadius={5}
+            borderWidth={1}
+            flexGrow={1}
+            textAlign="center"
+          >
+            <Heading py={10}>Your Submissions</Heading>
+            {loggedIn && (
+              <>
+                <Table variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th>Transaction Time</Th>
+                      <Th>Input</Th>
+                      <Th>Output</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    <Tr>
+                      <Td>25 May 2021 17:40</Td>
+                      <Td>5</Td>
+                      <Td>2898</Td>
+                    </Tr>
+                    <Tr>
+                      <Td>25 May 2021 17:40</Td>
+                      <Td>5</Td>
+                      <Td>2898</Td>
+                    </Tr>
+                    <Tr>
+                      <Td>25 May 2021 17:40</Td>
+                      <Td>5</Td>
+                      <Td>2898</Td>
+                    </Tr>
+                    <Tr>
+                      <Td>25 May 2021 17:40</Td>
+                      <Td>5</Td>
+                      <Td>2898</Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+                <Box alignItems="center" marginTop={3}>
+                  <Link>{'<<'}</Link>
+                  <Link marginLeft={4}>1</Link>
+                  <Link marginLeft={4}>2</Link>
+                  <Link marginLeft={4}>3</Link>
+                  <Link marginLeft={4}>{'>>'}</Link>
+                </Box>
+              </>
+            )}
+            {!loggedIn && (
+              <VStack justify="space-between" marginBottom={5} spacing={8}>
+                <Text>Log In to fetch your submissions</Text>
+                <Button
+                  colorScheme={'green'}
+                  bg={'green.400'}
+                  fontSize={'sm'}
+                  fontWeight={600}
+                  //   rounded={'full'}
+                  _hover={{
+                    bg: 'green.500',
+                  }}
+                >
+                  Log in with Metamask
+                </Button>
+              </VStack>
+            )}
+          </Box>
+        </Flex>
       </Box>
 
       {/* Footer */}
@@ -251,7 +347,9 @@ function App() {
             align="center"
             justify="space-between"
           >
-            <Logo />
+            <Link href="https://optym.tech">
+              <Logo />
+            </Link>
             <ButtonGroup variant="ghost" color="gray.600">
               <IconButton
                 as="a"
@@ -262,9 +360,24 @@ function App() {
               />
             </ButtonGroup>
           </Stack>
-          <Text fontSize="sm" alignSelf={{ base: 'center', sm: 'start' }}>
-            &copy; {new Date().getFullYear()} Optym. All rights reserved.
-          </Text>
+          <Stack
+            direction="row"
+            spacing="4"
+            align="center"
+            justify="space-between"
+          >
+            <Text fontSize="sm" alignSelf={{ base: 'center', sm: 'start' }}>
+              &copy; {new Date().getFullYear()} Optym. All rights reserved.
+            </Text>
+            <Link
+              fontSize="sm"
+              textAlign="right"
+              href="https://optym.tech/new"
+              target="_blank"
+            >
+              Want to host a similar competition?
+            </Link>
+          </Stack>
         </Stack>
       </Box>
 

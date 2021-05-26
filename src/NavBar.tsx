@@ -38,7 +38,7 @@ export default function WithSubnavigation(prop: Prop) {
         borderColor={useColorModeValue('gray.200', 'gray.700')}
         align={'center'}
       >
-        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
+        <Flex flex={{ base: 1 }} justify={'start'}>
           <Logo />
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>

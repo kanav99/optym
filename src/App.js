@@ -29,27 +29,16 @@ import {
   TableCaption,
 } from '@chakra-ui/react';
 
-import { useState, useEffect } from 'react';
-import { mode } from '@chakra-ui/theme-tools';
-
-import NavBar from './NavBar';
-// import CallToActionWithAnnotation from './Hero';
-import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
-import { Logo } from './Logo';
+import { useState, useEffect, useRef } from 'react';
+import { FaGithub } from 'react-icons/fa';
 
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { useRef } from 'react';
 
-const config = {
-  // in epoch seconds
-  endingTime: 1622374200,
-  funderName: 'Kanav Gupta',
-  wager: 0.1,
-  challengeCode: 'function challenge(i)\n{\n\treturn 42 * 69;\n}',
-  funderWallet: '0xdeadbeef',
-  contractAddress: '0xcafebabe',
-};
+import NavBar from './NavBar';
+import { Logo } from './Logo';
+
+import config from './config';
 
 function Counter(props) {
   let ending = props.ending;
@@ -136,7 +125,7 @@ function App() {
                 }}
                 onClick={onOpen}
               >
-                <Text ref={myRef} color={mode('white', 'black!')}>
+                <Text ref={myRef} color={'white'}>
                   Submit a solution
                 </Text>
               </Box>
@@ -243,13 +232,6 @@ function App() {
               </Tbody>
             </Table>
           </Box>
-          {/* <Stack
-            direction="row"
-            spacing="4"
-            align="center"
-            justify="space-between"
-          > */}
-          {/* <Image w={'60%'} src="/kawai.png"></Image> */}
         </Stack>
       </Box>
 
@@ -273,21 +255,10 @@ function App() {
             <ButtonGroup variant="ghost" color="gray.600">
               <IconButton
                 as="a"
-                href="#"
-                aria-label="LinkedIn"
-                icon={<FaLinkedin fontSize="20px" />}
-              />
-              <IconButton
-                as="a"
-                href="#"
+                href="https://github.com/kanav99/optym"
+                target="_blank"
                 aria-label="GitHub"
                 icon={<FaGithub fontSize="20px" />}
-              />
-              <IconButton
-                as="a"
-                href="#"
-                aria-label="Twitter"
-                icon={<FaTwitter fontSize="20px" />}
               />
             </ButtonGroup>
           </Stack>

@@ -52,7 +52,7 @@ function Counter(props) {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [ending]);
 
   const hours = (count / 3600) | 0;
   const rem_seconds = count % 3600;

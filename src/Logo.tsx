@@ -1,7 +1,6 @@
-import { HTMLChakraProps, useToken, Image, Text, Flex } from '@chakra-ui/react';
+import { HTMLChakraProps, Image, Text, Flex } from '@chakra-ui/react';
 
 export const Logo = (props: HTMLChakraProps<'svg'>) => {
-  const [white, black] = useToken('colors', ['white', 'gray.800']);
   return (
     <Flex alignItems="center">
       <Image src="simplex.png" h={10}></Image>

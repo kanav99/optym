@@ -3,15 +3,10 @@ import {
   theme,
   Text,
   Box,
-  Grid,
-  GridItem,
-  Tag,
-  Image,
   Table,
   Tr,
   Td,
   Tbody,
-  useColorModeValue,
   Heading,
   Thead,
   Th,
@@ -29,11 +24,14 @@ import {
   ModalCloseButton,
   useDisclosure,
   Input,
+  Code,
+  Link,
+  TableCaption,
 } from '@chakra-ui/react';
 
+import { useState, useEffect } from 'react';
 import { mode } from '@chakra-ui/theme-tools';
 
-import { ColorModeSwitcher } from './ColorModeSwitcher';
 import NavBar from './NavBar';
 // import CallToActionWithAnnotation from './Hero';
 import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
@@ -42,6 +40,42 @@ import { Logo } from './Logo';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { useRef } from 'react';
+
+const config = {
+  // in epoch seconds
+  endingTime: 1622374200,
+  funderName: 'Kanav Gupta',
+  wager: 0.1,
+  challengeCode: 'function challenge(i)\n{\n\treturn 42 * 69;\n}',
+  funderWallet: '0xdeadbeef',
+  contractAddress: '0xcafebabe',
+};
+
+function Counter(props) {
+  let ending = props.ending;
+  const [count, setCount] = useState(ending - ((Date.now() / 1000) | 0));
+
+  useEffect(() => {
+    const interval = setInterval(
+      () => setCount(ending - ((Date.now() / 1000) | 0)),
+      1000
+    );
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  const hours = (count / 3600) | 0;
+  const rem_seconds = count % 3600;
+  const minutes = (rem_seconds / 60) | 0;
+  const seconds = rem_seconds % 60;
+  return (
+    <Heading>
+      {hours}:{('0' + minutes).slice(-2)}:{('0' + seconds).slice(-2)} hrs to
+      submit
+    </Heading>
+  );
+}
 
 function App() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -68,21 +102,23 @@ function App() {
               lineHeight={'110%'}
             >
               <Text as={'span'} color={'green.400'}>
-                Kanav Gupta
+                {config.funderName}
               </Text>{' '}
-              is organizing a stonk war worth{' '}
+              is organizing a Optym contest worth <br />
               <Text as={'span'} color={'green.400'}>
-                0.1 ETH
+                {config.wager} ETH
               </Text>
             </Heading>
             <Text color={'gray.500'}>
               Here's the deal - find the input to the function given below which
-              maximizes the output value and one with the largest output value
-              wins 0.1 ETH.
+              maximizes the output value and person who deposits the largest
+              output value before{' '}
+              {new Date(config.endingTime * 1000).toUTCString()} wins 0.1 ETH.
             </Text>
-            <Box textAlign="left">
+            <Counter ending={config.endingTime} />
+            <Box textAlign="left" borderRadius={5}>
               <SyntaxHighlighter language="javascript" style={docco}>
-                {'function challenge(i)\n{\n\treturn 42 * 69;\n}'}
+                {config.challengeCode}
               </SyntaxHighlighter>
             </Box>
             <Box>
@@ -100,14 +136,16 @@ function App() {
                 }}
                 onClick={onOpen}
               >
-                <Text color={mode('white', 'black!')}>Submit a solution</Text>
+                <Text ref={myRef} color={mode('white', 'black!')}>
+                  Submit a solution
+                </Text>
               </Box>
             </Box>
           </Stack>
         </Container>
 
         {/* Leaderboard Table */}
-        <Heading ref={myRef}>Leaderboard</Heading>
+        <Heading paddingBottom={5}>Leaderboard</Heading>
         <Table>
           <Thead>
             <Tr>
@@ -163,6 +201,56 @@ function App() {
             </Tr>
           </Tbody>
         </Table>
+
+        {/* Funder */}
+        <Heading py={10}>About Competition</Heading>
+        <Stack
+          direction="row"
+          spacing="4"
+          align="center"
+          justify="space-between"
+        >
+          <Box p={5} m={10} minWidth={'50%'} borderRadius={5} borderWidth={1}>
+            <Table variant="simple">
+              <TableCaption>
+                Powered by <Link>Optym</Link>
+              </TableCaption>
+              <Tbody>
+                <Tr>
+                  <Th>Funder Name</Th>
+                  <Td>{config.funderName}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Funder Wallet</Th>
+                  <Td>
+                    <Code>
+                      <Link>{config.funderWallet}</Link>
+                    </Code>
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Th>Contract Address</Th>
+                  <Td>
+                    <Code>
+                      <Link>{config.contractAddress}</Link>
+                    </Code>
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Th>Wager Amount</Th>
+                  <Td>{config.wager} ETH</Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </Box>
+          {/* <Stack
+            direction="row"
+            spacing="4"
+            align="center"
+            justify="space-between"
+          > */}
+          {/* <Image w={'60%'} src="/kawai.png"></Image> */}
+        </Stack>
       </Box>
 
       {/* Footer */}
@@ -204,8 +292,7 @@ function App() {
             </ButtonGroup>
           </Stack>
           <Text fontSize="sm" alignSelf={{ base: 'center', sm: 'start' }}>
-            &copy; {new Date().getFullYear()} Envelope, Inc. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} Optym. All rights reserved.
           </Text>
         </Stack>
       </Box>

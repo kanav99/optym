@@ -15,6 +15,7 @@ import {
   useBreakpointValue,
   useDisclosure,
   propNames,
+  Heading,
 } from '@chakra-ui/react';
 import {
   HamburgerIcon,
@@ -46,29 +47,7 @@ export default function WithSubnavigation(prop: Prop) {
         borderColor={useColorModeValue('gray.200', 'gray.700')}
         align={'center'}
       >
-        <Flex
-          flex={{ base: 1, md: 'auto' }}
-          ml={{ base: -2 }}
-          display={{ base: 'flex', md: 'none' }}
-        >
-          <IconButton
-            onClick={onToggle}
-            icon={
-              isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
-            }
-            variant={'ghost'}
-            aria-label={'Toggle Navigation'}
-          />
-        </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          {/* <Text
-            as="em"
-            textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-            fontFamily={'heading'}
-            color={useColorModeValue('gray.800', 'white')}
-          >
-            Stonk Wars
-          </Text> */}
           <Logo />
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
@@ -92,17 +71,6 @@ export default function WithSubnavigation(prop: Prop) {
           >
             Leaderboard
           </Button>
-          {/* <Button
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            fontWeight={600}
-            // color={'white'}
-            bg={'green.400'}
-            href={'#'}
-            _hover={{
-              bg: 'green.300',
-            }}
-          > */}
           <Button
             colorScheme={'green'}
             bg={'green.400'}

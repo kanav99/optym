@@ -32,7 +32,7 @@ import {
 } from '@chakra-ui/react';
 
 import { useState, useEffect, useRef } from 'react';
-import { FaGithub } from 'react-icons/fa';
+import { FaGithub, FaEnvelope } from 'react-icons/fa';
 
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -353,11 +353,16 @@ function App() {
             <ButtonGroup variant="ghost" color="gray.600">
               <IconButton
                 as="a"
-                href="https://github.com/kanav99/optym"
+                href="https://github.com/optymtech/optym"
                 target="_blank"
                 aria-label="GitHub"
                 icon={<FaGithub fontSize="20px" />}
               />
+              <IconButton
+                as="a"
+                href="mailto:contact@optym.tech"
+                icon={<FaEnvelope fontSize="20px" />}
+              ></IconButton>
             </ButtonGroup>
           </Stack>
           <Stack

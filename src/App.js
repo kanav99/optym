@@ -135,7 +135,7 @@ function App() {
 
       const backend = await import(
         /* webpackIgnore: true */
-        'https://optymtech.github.io/reachci/epicchad/build/index.main.mjs'
+        'https://optymtech.github.io/reachci/min/build/index.main.mjs'
       );
       const ctcStr = JSON.parse(config.ctcstring);
       console.log(ctcStr);

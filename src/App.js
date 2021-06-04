@@ -29,6 +29,8 @@ import {
   TableCaption,
   Flex,
   VStack,
+  NumberInput,
+  NumberInputField,
 } from '@chakra-ui/react';
 
 import { useState, useEffect, useRef } from 'react';
@@ -37,10 +39,13 @@ import { FaGithub, FaEnvelope } from 'react-icons/fa';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
+import { loadStdlib } from '@reach-sh/stdlib';
+
 import NavBar from './NavBar';
 import { Logo } from './Logo';
 
 import config from './config';
+const stdlib = loadStdlib('ETH');
 
 function Counter(props) {
   let ending = props.ending;
@@ -72,16 +77,74 @@ const loggedIn = false;
 
 function App() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [metaMaskAccount, setMetaMaskAccout] = useState(null);
+  const [submittingValue, setSubmittingValue] = useState(0);
   const myRef = useRef(null);
   const executeScroll = () =>
     myRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(config.code);
   useEffect(() => {
-    fetch('/challenge.js')
-      .then(resp => resp.text())
-      .then(t => setCode(t.trim()));
-  }, []);
+    // fetch('/challenge.js')
+    //   .then(resp => resp.text())
+    //   .then(t => setCode(t.trim()));
+    // reach.getDefaultAccount().then(acc => {
+    //   setMetaMaskAccout(acc);
+    // });
+  });
+
+  const playGame = () => {
+    stdlib.getDefaultAccount().then(async acc => {
+      const fmt = x => stdlib.formatCurrency(x, 4);
+      const getBalance = async who => fmt(await stdlib.balanceOf(who));
+      // setMetaMaskAccout(acc);
+
+      var once = true;
+      const Contestant = i => ({
+        // Who: `Contestant ${i}`,
+        // ...Common,
+        submitValue: () => {
+          // if (i == 0) {
+          if (once) {
+            const value = submittingValue;
+            console.log(`Contestant ${i} submitted ${value}`);
+            once = false;
+            return ['Some', value];
+          } else {
+            return ['None', null];
+          }
+          // return null;
+        },
+        informWinner: winner => {
+          if (stdlib.addressEq(winner, acc)) {
+            console.log(`Contestant ${i} won!`);
+          } else {
+            console.log('o no');
+          }
+        },
+        informBounty: (bountyAmt, deadline) => {
+          console.log('here');
+          console.log(
+            `Contestant ${i} saw a bounty of ${bountyAmt} and deadline ${deadline}`
+          );
+        },
+        // shouldSubmitValue: () => {
+        //     return Math.random() < 0.1;
+        // }
+      });
+
+      const backend = await import(
+        /* webpackIgnore: true */
+        'https://optymtech.github.io/reachci/epicchad/build/index.main.mjs'
+      );
+      const ctcStr = JSON.parse(config.ctcstring);
+      console.log(ctcStr);
+      const ctcContestant = acc.attach(backend, ctcStr);
+      console.log(ctcContestant);
+      backend.Contestant(ctcContestant, Contestant(69));
+      console.log('hello 2');
+    });
+  };
 
   return (
     <ChakraProvider theme={theme}>
@@ -205,13 +268,6 @@ function App() {
               </Tbody>
             </Table>
           </Box>
-          <Box alignItems="center" marginTop={3}>
-            <Link>{'<<'}</Link>
-            <Link marginLeft={4}>1</Link>
-            <Link marginLeft={4}>2</Link>
-            <Link marginLeft={4}>3</Link>
-            <Link marginLeft={4}>{'>>'}</Link>
-          </Box>
         </Box>
 
         {/* Funder Info */}
@@ -258,7 +314,7 @@ function App() {
             </Table>
           </Box>
           {/* Your Submissions */}
-          <Box
+          {/* <Box
             p={5}
             minWidth="40%"
             m={10}
@@ -327,7 +383,7 @@ function App() {
                 </Button>
               </VStack>
             )}
-          </Box>
+          </Box> */}
         </Flex>
       </Box>
 
@@ -393,14 +449,31 @@ function App() {
           <ModalHeader>Submit a solution</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text>Waiting for Metamask...{'\n'}</Text>
-            <br />
-            <Input placeholder="Enter your solution" size="md"></Input>
+            {/* <Text>Waiting for Metamask...{'\n'}</Text>
+            <br /> */}
+            <NumberInput
+              placeholder="Enter your solution"
+              size="md"
+              value={submittingValue}
+              onChange={val => {
+                console.log('hehehe ' + val);
+                setSubmittingValue(val);
+              }}
+            >
+              <NumberInputField />
+            </NumberInput>
           </ModalBody>
 
           <ModalFooter>
             {/* <Button variant="ghost">Secondary Action</Button> */}
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                playGame();
+                onClose();
+              }}
+            >
               Submit
             </Button>
           </ModalFooter>

@@ -278,7 +278,11 @@ function App() {
                   <Th>Funder Wallet</Th>
                   <Td>
                     <Code>
-                      <Link>{config.funderWallet}</Link>
+                      <Link
+                        href={`https://ropsten.etherscan.io/address/${config.funderWallet}`}
+                      >
+                        {config.funderWallet}
+                      </Link>
                     </Code>
                   </Td>
                 </Tr>
@@ -286,7 +290,11 @@ function App() {
                   <Th>Contract Address</Th>
                   <Td>
                     <Code>
-                      <Link>{config.contractAddress}</Link>
+                      <Link
+                        href={`https://ropsten.etherscan.io/address/${config.contractAddress}`}
+                      >
+                        {config.contractAddress}
+                      </Link>
                     </Code>
                   </Td>
                 </Tr>

@@ -23,12 +23,10 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  Input,
   Code,
   Link,
   TableCaption,
   Flex,
-  VStack,
   NumberInput,
   NumberInputField,
 } from '@chakra-ui/react';
@@ -73,42 +71,27 @@ function Counter(props) {
   );
 }
 
-const loggedIn = false;
-
 function App() {
+  var lol = useRef(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [metaMaskAccount, setMetaMaskAccout] = useState(null);
   const [submittingValue, setSubmittingValue] = useState(0);
   const myRef = useRef(null);
   const executeScroll = () =>
     myRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  const [code, setCode] = useState(config.code);
-  useEffect(() => {
-    // fetch('/challenge.js')
-    //   .then(resp => resp.text())
-    //   .then(t => setCode(t.trim()));
-    // reach.getDefaultAccount().then(acc => {
-    //   setMetaMaskAccout(acc);
-    // });
-  });
+  const code = config.code;
 
   const playGame = () => {
     stdlib.getDefaultAccount().then(async acc => {
-      const fmt = x => stdlib.formatCurrency(x, 4);
-      const getBalance = async who => fmt(await stdlib.balanceOf(who));
-      // setMetaMaskAccout(acc);
-
-      var once = true;
       const Contestant = i => ({
         // Who: `Contestant ${i}`,
         // ...Common,
         submitValue: () => {
           // if (i == 0) {
-          if (once) {
+          if (lol.current) {
             const value = submittingValue;
             console.log(`Contestant ${i} submitted ${value}`);
-            once = false;
+            lol.current = false;
             return ['Some', value];
           } else {
             return ['None', null];
@@ -133,9 +116,11 @@ function App() {
         // }
       });
 
+      var host = window.location.host;
+      var subdomain = host.split('.')[0];
       const backend = await import(
         /* webpackIgnore: true */
-        'https://optymtech.github.io/reachci/min/build/index.main.mjs'
+        `https://optymtech.github.io/reachci/${subdomain}/build/index.main.mjs`
       );
       const ctcStr = JSON.parse(config.ctcstring);
       console.log(ctcStr);
@@ -176,7 +161,8 @@ function App() {
               Here's the deal - find the input to the function given below which
               maximizes the output value and person who deposits the largest
               output value before{' '}
-              {new Date(config.endingTime * 1000).toUTCString()} wins 0.1 ETH.
+              {new Date(config.endingTime * 1000).toUTCString()} wins{' '}
+              {config.wager} ETH.
             </Text>
             <Counter ending={config.endingTime} />
             {/* Code */}
@@ -456,7 +442,6 @@ function App() {
               size="md"
               value={submittingValue}
               onChange={val => {
-                console.log('hehehe ' + val);
                 setSubmittingValue(val);
               }}
             >
@@ -470,8 +455,9 @@ function App() {
               colorScheme="blue"
               mr={3}
               onClick={() => {
+                lol.current = true;
                 playGame();
-                onClose();
+                // onClose();
               }}
             >
               Submit

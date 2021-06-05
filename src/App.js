@@ -31,7 +31,7 @@ import {
   NumberInputField,
 } from '@chakra-ui/react';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { FaGithub, FaEnvelope } from 'react-icons/fa';
 
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -45,31 +45,31 @@ import { Logo } from './Logo';
 import config from './config';
 const stdlib = loadStdlib('ETH');
 
-function Counter(props) {
-  let ending = props.ending;
-  const [count, setCount] = useState(ending - ((Date.now() / 1000) | 0));
+// function Counter(props) {
+//   let ending = props.ending;
+//   const [count, setCount] = useState(ending - ((Date.now() / 1000) | 0));
 
-  useEffect(() => {
-    const interval = setInterval(
-      () => setCount(ending - ((Date.now() / 1000) | 0)),
-      1000
-    );
-    return () => {
-      clearInterval(interval);
-    };
-  }, [ending]);
+//   useEffect(() => {
+//     const interval = setInterval(
+//       () => setCount(ending - ((Date.now() / 1000) | 0)),
+//       1000
+//     );
+//     return () => {
+//       clearInterval(interval);
+//     };
+//   }, [ending]);
 
-  const hours = (count / 3600) | 0;
-  const rem_seconds = count % 3600;
-  const minutes = (rem_seconds / 60) | 0;
-  const seconds = rem_seconds % 60;
-  return (
-    <Heading>
-      {hours}:{('0' + minutes).slice(-2)}:{('0' + seconds).slice(-2)} hrs to
-      submit
-    </Heading>
-  );
-}
+//   const hours = (count / 3600) | 0;
+//   const rem_seconds = count % 3600;
+//   const minutes = (rem_seconds / 60) | 0;
+//   const seconds = rem_seconds % 60;
+//   return (
+//     <Heading>
+//       {hours}:{('0' + minutes).slice(-2)}:{('0' + seconds).slice(-2)} hrs to
+//       submit
+//     </Heading>
+//   );
+// }
 
 function App() {
   var lol = useRef(false);
@@ -160,11 +160,9 @@ function App() {
             <Text color={'gray.500'}>
               Here's the deal - find the input to the function given below which
               maximizes the output value and person who deposits the largest
-              output value before{' '}
-              {new Date(config.endingTime * 1000).toUTCString()} wins{' '}
-              {config.wager} ETH.
+              output value before {config.deadline} wins {config.wager} ETH.
             </Text>
-            <Counter ending={config.endingTime} />
+            {/* <Counter ending={config.endingTime} /> */}
             {/* Code */}
             <Box textAlign="left" borderRadius={5}>
               <SyntaxHighlighter language="javascript" style={docco}>

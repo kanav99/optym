@@ -1,10 +1,88 @@
-const config = {
-  // in epoch seconds
-  endingTime: 1622374200,
+const conf = {
   funderName: 'Kanav Gupta',
-  wager: 0.1,
-  funderWallet: '0xdeadbeef',
-  contractAddress: '0xcafebabe',
+  wager: '0.050',
+  funderWallet: '0xd7294984915d0eD101F7cAC74bfb84D361E1341c',
+  contractAddress: '0x4ba7Ed3f699A23b85d6E7E4ac2cF5672AfFAF75d',
+  ctcstring:
+    '{"address":"0x4ba7Ed3f699A23b85d6E7E4ac2cF5672AfFAF75d","creation_block":25315892,"transactionHash":"0x594536d82b7ab62b53073bfcbba7d5ffe2290ac0e927ac1cad1b6a7340f88f48"}',
+  code: "'reach 0.1';\n\nexport function bountyFunction(i) {\n  return i % 42;\n}\n",
+  deadline: 1000,
+  funderAccount: {
+    _isSigner: true,
+    provider: {
+      _isProvider: true,
+      _events: [],
+      _emitted: { block: -2 },
+      formatter: {
+        formats: {
+          transaction: {},
+          transactionRequest: {},
+          receiptLog: {},
+          receipt: {},
+          block: {},
+          blockWithTransactions: {},
+          filter: {},
+          filterLog: {},
+        },
+      },
+      anyNetwork: false,
+      _networkPromise: {},
+      _maxInternalBlockNumber: -1024,
+      _lastBlockNumber: -2,
+      _pollingInterval: 4000,
+      _fastQueryDate: 0,
+      connection: { url: 'metamask' },
+      _nextId: 42,
+      provider: {
+        _events: {},
+        _eventsCount: 1,
+        _maxListeners: 100,
+        _log: {
+          levels: {
+            TRACE: 0,
+            DEBUG: 1,
+            INFO: 2,
+            WARN: 3,
+            ERROR: 4,
+            SILENT: 5,
+          },
+        },
+        isMetaMask: true,
+        _state: {
+          sentWarnings: {
+            enable: false,
+            experimentalMethods: false,
+            send: false,
+            events: {
+              close: false,
+              data: false,
+              networkChanged: false,
+              notification: false,
+            },
+          },
+          accounts: ['0xd7294984915d0ed101f7cac74bfb84d361e1341c'],
+          isConnected: true,
+          isUnlocked: true,
+          initialized: true,
+          isPermanentlyDisconnected: false,
+        },
+        _metamask: {},
+        selectedAddress: '0xd7294984915d0ed101f7cac74bfb84d361e1341c',
+        networkVersion: '42',
+        chainId: '0x2a',
+        _rpcEngine: {
+          _events: {},
+          _eventsCount: 0,
+          _middleware: [null, null, null],
+        },
+      },
+      _eventLoopCache: { detectNetwork: null },
+      _network: { name: 'kovan', chainId: 42, ensAddress: null },
+    },
+    _index: 0,
+    _address: null,
+    address: '0xd7294984915d0eD101F7cAC74bfb84D361E1341c',
+  },
 };
 
-export default config;
+export default conf;

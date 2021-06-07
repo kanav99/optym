@@ -31,7 +31,7 @@ import {
   NumberInputField,
 } from '@chakra-ui/react';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FaGithub, FaEnvelope } from 'react-icons/fa';
 
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -44,32 +44,39 @@ import { Logo } from './Logo';
 
 import config from './config';
 const stdlib = loadStdlib('ETH');
+const networkName = config.funderAccount.provider._network.name;
+const ctcObj = JSON.parse(config.ctcstring);
 
-// function Counter(props) {
-//   let ending = props.ending;
-//   const [count, setCount] = useState(ending - ((Date.now() / 1000) | 0));
+function Counter(props) {
+  const [currentBlock, setCurrentBlock] = useState(0);
 
-//   useEffect(() => {
-//     const interval = setInterval(
-//       () => setCount(ending - ((Date.now() / 1000) | 0)),
-//       1000
-//     );
-//     return () => {
-//       clearInterval(interval);
-//     };
-//   }, [ending]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetch(
+        `https://${networkName}.infura.io/v3/918b3d31ca0141bb8fd76be2879394ae`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{"jsonrpc":"2.0","method":"eth_blockNumber","params": [],"id":1}',
+        }
+      )
+        .then(response => response.json())
+        .then(json => {
+          setCurrentBlock(parseInt(json.result, 16));
+        });
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
-//   const hours = (count / 3600) | 0;
-//   const rem_seconds = count % 3600;
-//   const minutes = (rem_seconds / 60) | 0;
-//   const seconds = rem_seconds % 60;
-//   return (
-//     <Heading>
-//       {hours}:{('0' + minutes).slice(-2)}:{('0' + seconds).slice(-2)} hrs to
-//       submit
-//     </Heading>
-//   );
-// }
+  return (
+    <Heading>
+      {config.deadline - currentBlock + ctcObj.creation_block} /{' '}
+      {config.deadline} blocks remaining till deadline!
+    </Heading>
+  );
+}
 
 function App() {
   var lol = useRef(false);
@@ -122,9 +129,8 @@ function App() {
         /* webpackIgnore: true */
         `https://optymtech.github.io/reachci/${subdomain}/build/index.main.mjs`
       );
-      const ctcStr = JSON.parse(config.ctcstring);
-      console.log(ctcStr);
-      const ctcContestant = acc.attach(backend, ctcStr);
+      console.log(ctcObj);
+      const ctcContestant = acc.attach(backend, ctcObj);
       console.log(ctcContestant);
       backend.Contestant(ctcContestant, Contestant(69));
       console.log('hello 2');
@@ -160,9 +166,10 @@ function App() {
             <Text color={'gray.500'}>
               Here's the deal - find the input to the function given below which
               maximizes the output value and person who deposits the largest
-              output value before {config.deadline} wins {config.wager} ETH.
+              output value before {config.deadline} blocks pass on the ledger,
+              wins {config.wager} ETH.
             </Text>
-            {/* <Counter ending={config.endingTime} /> */}
+            <Counter />
             {/* Code */}
             <Box textAlign="left" borderRadius={5}>
               <SyntaxHighlighter language="javascript" style={docco}>
@@ -267,7 +274,7 @@ function App() {
             <Heading py={10}>About Competition</Heading>
             <Table variant="simple">
               <TableCaption>
-                Powered by <Link>Optym</Link>
+                Powered by <Link href="https://optym.tech">Optym</Link>
               </TableCaption>
               <Tbody>
                 <Tr>
@@ -275,11 +282,15 @@ function App() {
                   <Td>{config.funderName}</Td>
                 </Tr>
                 <Tr>
+                  <Th>Network</Th>
+                  <Td>{networkName}</Td>
+                </Tr>
+                <Tr>
                   <Th>Funder Wallet</Th>
                   <Td>
                     <Code>
                       <Link
-                        href={`https://ropsten.etherscan.io/address/${config.funderWallet}`}
+                        href={`https://${networkName}.etherscan.io/address/${config.funderWallet}`}
                       >
                         {config.funderWallet}
                       </Link>
@@ -291,7 +302,7 @@ function App() {
                   <Td>
                     <Code>
                       <Link
-                        href={`https://ropsten.etherscan.io/address/${config.contractAddress}`}
+                        href={`https://${networkName}.etherscan.io/address/${config.contractAddress}`}
                       >
                         {config.contractAddress}
                       </Link>

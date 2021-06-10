@@ -20,6 +20,7 @@ import { Logo } from './Logo';
 interface Prop {
   onPrimary: () => void;
   onSecondary: () => void;
+  primaryDisable: boolean;
 }
 
 export default function WithSubnavigation(prop: Prop) {
@@ -72,6 +73,7 @@ export default function WithSubnavigation(prop: Prop) {
               bg: 'green.500',
             }}
             onClick={prop.onPrimary}
+            isDisabled={prop.primaryDisable}
           >
             Submit a solution
           </Button>

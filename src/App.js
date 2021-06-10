@@ -29,6 +29,7 @@ import {
   Flex,
   NumberInput,
   NumberInputField,
+  VStack,
 } from '@chakra-ui/react';
 
 import { useState, useRef, useEffect } from 'react';
@@ -43,50 +44,52 @@ import NavBar from './NavBar';
 import { Logo } from './Logo';
 
 import config from './config';
-const stdlib = loadStdlib('ETH');
-const networkName = config.funderAccount.provider._network.name;
+
+const tokenName = 'ETH';
+const stdlib = loadStdlib(tokenName);
+
+const isAlgo = () => tokenName === 'ALGO';
+
+if (isAlgo()) {
+  stdlib.setProviderByName('TestNet');
+  stdlib.setSignStrategy('AlgoSigner');
+}
+
+/// CONSTANTS!!!
+const networkName = isAlgo()
+  ? 'testnet'
+  : config.funderAccount.provider._network.name;
+
 const ctcObj = JSON.parse(config.ctcstring);
 
-function Counter(props) {
-  const [currentBlock, setCurrentBlock] = useState(0);
+const contractAddr = isAlgo() ? ctcObj.ApplicationID : ctcObj.address;
+const contractBlock = isAlgo() ? ctcObj.creationRound : ctcObj.creation_block;
+const funderWalletAddr = isAlgo()
+  ? config.funderAccount.addr
+  : config.funderAccount.provider.provider.selectedAddress;
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetch(
-        `https://${networkName}.infura.io/v3/918b3d31ca0141bb8fd76be2879394ae`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: '{"jsonrpc":"2.0","method":"eth_blockNumber","params": [],"id":1}',
-        }
-      )
-        .then(response => response.json())
-        .then(json => {
-          setCurrentBlock(parseInt(json.result, 16));
-        });
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+const contractLink = isAlgo()
+  ? `https://testnet.algoexplorer.io/application/${contractAddr}`
+  : `https://${networkName}.etherscan.io/address/${contractAddr}`;
 
-  return (
-    <Heading>
-      {config.deadline - currentBlock + ctcObj.creation_block} /{' '}
-      {config.deadline} blocks remaining till deadline!
-    </Heading>
-  );
-}
+const funderLink = isAlgo()
+  ? `https://testnet.algoexplorer.io/address/${funderWalletAddr}`
+  : `https://${networkName}.etherscan.io/address/${funderWalletAddr}`;
+/// CONSTANTS END!!!
 
 function App() {
   var lol = useRef(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [submittingValue, setSubmittingValue] = useState(0);
   const myRef = useRef(null);
+  const [currentBlock, setCurrentBlock] = useState(0);
+
   const executeScroll = () =>
     myRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const code = config.code;
+  let ended = config.deadline - currentBlock + ctcObj.creationRound < 0;
+  const [submissionStage, setSubmissionStage] = useState(0);
 
   const playGame = () => {
     stdlib.getDefaultAccount().then(async acc => {
@@ -118,6 +121,10 @@ function App() {
             `Contestant ${i} saw a bounty of ${bountyAmt} and deadline ${deadline}`
           );
         },
+        informSucc: succ => {
+          console.log('informSucc');
+          lol.current = false;
+        },
         // shouldSubmitValue: () => {
         //     return Math.random() < 0.1;
         // }
@@ -137,10 +144,43 @@ function App() {
     });
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (tokenName === 'ALGO') {
+        fetch(`https://${networkName}.algoexplorerapi.io/v2/status`)
+          .then(response => response.json())
+          .then(json => {
+            // setCurrentBlock(parseInt(json.result, 16));
+            setCurrentBlock(json['last-round']);
+          });
+      } else if (tokenName === 'ETH') {
+        fetch(
+          `https://${networkName}.infura.io/v3/918b3d31ca0141bb8fd76be2879394ae`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: '{"jsonrpc":"2.0","method":"eth_blockNumber","params": [],"id":1}',
+          }
+        )
+          .then(response => response.json())
+          .then(json => {
+            setCurrentBlock(parseInt(json.result, 16));
+          });
+      }
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
     <ChakraProvider theme={theme}>
       <Box position="sticky" top={0}>
-        <NavBar onPrimary={onOpen} onSecondary={executeScroll} />
+        <NavBar
+          onPrimary={onOpen}
+          onSecondary={executeScroll}
+          primaryDisable={ended}
+        />
       </Box>
       <Box textAlign="center">
         <Container maxW={'3xl'}>
@@ -160,42 +200,67 @@ function App() {
               </Text>{' '}
               is organizing an Optym contest worth <br />
               <Text as={'span'} color={'green.400'}>
-                {config.wager} ETH
+                {config.wager} {tokenName}
               </Text>
             </Heading>
             <Text color={'gray.500'}>
               Here's the deal - find the input to the function given below which
               maximizes the output value and person who deposits the largest
               output value before {config.deadline} blocks pass on the ledger,
-              wins {config.wager} ETH.
+              wins {config.wager} {tokenName}.
             </Text>
-            <Counter />
+            {!ended && (
+              <Heading>
+                {/* {config.deadline - currentBlock + ctcObj.creation_block} /{' '} */}
+                {config.deadline - currentBlock + contractBlock} /{' '}
+                {config.deadline} blocks remaining till deadline!
+              </Heading>
+            )}
+            {ended && (
+              <VStack spacing={10}>
+                <Heading>Competition has ended!</Heading>
+                <Button
+                  colorScheme={'green'}
+                  bg={'green.400'}
+                  fontSize={'md'}
+                  fontWeight={600}
+                  //   rounded={'full'}
+                  _hover={{
+                    bg: 'green.500',
+                  }}
+                >
+                  Transfer money to winner
+                </Button>
+              </VStack>
+            )}
             {/* Code */}
             <Box textAlign="left" borderRadius={5}>
               <SyntaxHighlighter language="javascript" style={docco}>
                 {code}
               </SyntaxHighlighter>
             </Box>
-            <Box>
-              <Box
-                as="button"
-                colorScheme={'green'}
-                bg={'green.400'}
-                d="inline!"
-                p={3}
-                borderRadius={'0.375rem'}
-                //   rounded={'full'}
-                px={6}
-                _hover={{
-                  bg: 'green.500',
-                }}
-                onClick={onOpen}
-              >
-                <Text ref={myRef} color={'white'}>
-                  Submit a solution
-                </Text>
+            {!ended && (
+              <Box>
+                <Box
+                  as="button"
+                  colorScheme={'green'}
+                  bg={'green.400'}
+                  d="inline!"
+                  p={3}
+                  borderRadius={'0.375rem'}
+                  //   rounded={'full'}
+                  px={6}
+                  _hover={{
+                    bg: 'green.500',
+                  }}
+                  onClick={onOpen}
+                >
+                  <Text ref={myRef} color={'white'}>
+                    Submit a solution
+                  </Text>
+                </Box>
               </Box>
-            </Box>
+            )}
           </Stack>
         </Container>
 
@@ -289,104 +354,27 @@ function App() {
                   <Th>Funder Wallet</Th>
                   <Td>
                     <Code>
-                      <Link
-                        href={`https://${networkName}.etherscan.io/address/${config.funderWallet}`}
-                      >
-                        {config.funderWallet}
-                      </Link>
+                      <Link href={funderLink}>{funderWalletAddr}</Link>
                     </Code>
                   </Td>
                 </Tr>
                 <Tr>
-                  <Th>Contract Address</Th>
+                  <Th>Contract Address / Application ID</Th>
                   <Td>
                     <Code>
-                      <Link
-                        href={`https://${networkName}.etherscan.io/address/${config.contractAddress}`}
-                      >
-                        {config.contractAddress}
-                      </Link>
+                      <Link href={contractLink}>{contractAddr}</Link>
                     </Code>
                   </Td>
                 </Tr>
                 <Tr>
                   <Th>Wager Amount</Th>
-                  <Td>{config.wager} ETH</Td>
+                  <Td>
+                    {config.wager} {tokenName}
+                  </Td>
                 </Tr>
               </Tbody>
             </Table>
           </Box>
-          {/* Your Submissions */}
-          {/* <Box
-            p={5}
-            minWidth="40%"
-            m={10}
-            borderRadius={5}
-            borderWidth={1}
-            flexGrow={1}
-            textAlign="center"
-          >
-            <Heading py={10}>Your Submissions</Heading>
-            {loggedIn && (
-              <>
-                <Table variant="simple">
-                  <Thead>
-                    <Tr>
-                      <Th>Transaction Time</Th>
-                      <Th>Input</Th>
-                      <Th>Output</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Tr>
-                      <Td>25 May 2021 17:40</Td>
-                      <Td>5</Td>
-                      <Td>2898</Td>
-                    </Tr>
-                    <Tr>
-                      <Td>25 May 2021 17:40</Td>
-                      <Td>5</Td>
-                      <Td>2898</Td>
-                    </Tr>
-                    <Tr>
-                      <Td>25 May 2021 17:40</Td>
-                      <Td>5</Td>
-                      <Td>2898</Td>
-                    </Tr>
-                    <Tr>
-                      <Td>25 May 2021 17:40</Td>
-                      <Td>5</Td>
-                      <Td>2898</Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-                <Box alignItems="center" marginTop={3}>
-                  <Link>{'<<'}</Link>
-                  <Link marginLeft={4}>1</Link>
-                  <Link marginLeft={4}>2</Link>
-                  <Link marginLeft={4}>3</Link>
-                  <Link marginLeft={4}>{'>>'}</Link>
-                </Box>
-              </>
-            )}
-            {!loggedIn && (
-              <VStack justify="space-between" marginBottom={5} spacing={8}>
-                <Text>Log In to fetch your submissions</Text>
-                <Button
-                  colorScheme={'green'}
-                  bg={'green.400'}
-                  fontSize={'sm'}
-                  fontWeight={600}
-                  //   rounded={'full'}
-                  _hover={{
-                    bg: 'green.500',
-                  }}
-                >
-                  Log in with Metamask
-                </Button>
-              </VStack>
-            )}
-          </Box> */}
         </Flex>
       </Box>
 
@@ -446,38 +434,64 @@ function App() {
       </Box>
 
       {/* Submitting modal */}
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          onClose();
+          setSubmittingValue(0);
+          setSubmissionStage(0);
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Submit a solution</ModalHeader>
-          <ModalCloseButton />
+          {submissionStage !== 1 && <ModalCloseButton />}
           <ModalBody>
-            {/* <Text>Waiting for Metamask...{'\n'}</Text>
-            <br /> */}
-            <NumberInput
-              placeholder="Enter your solution"
-              size="md"
-              value={submittingValue}
-              onChange={val => {
-                setSubmittingValue(val);
-              }}
-            >
-              <NumberInputField />
-            </NumberInput>
+            {submissionStage === 0 && (
+              <VStack>
+                <Text width="full">Submit an input value:</Text>
+                <NumberInput
+                  placeholder="Enter your solution"
+                  size="md"
+                  value={submittingValue}
+                  onChange={val => {
+                    setSubmittingValue(val);
+                  }}
+                  width="full"
+                >
+                  <NumberInputField />
+                </NumberInput>
+              </VStack>
+            )}
+            {submissionStage === 1 && (
+              <Text>Submitting {submittingValue} ...</Text>
+            )}
+            {submissionStage === 2 && (
+              <Text>Successfully submitted {submittingValue}!</Text>
+            )}
           </ModalBody>
 
           <ModalFooter>
-            {/* <Button variant="ghost">Secondary Action</Button> */}
             <Button
               colorScheme="blue"
               mr={3}
               onClick={() => {
-                lol.current = true;
-                playGame();
-                // onClose();
+                if (submissionStage === 0) {
+                  lol.current = true;
+                  playGame();
+                  setTimeout(() => {
+                    setSubmissionStage(2);
+                  }, 5000);
+                  setSubmissionStage(1);
+                } else if (submissionStage === 2) {
+                  onClose();
+                  setSubmittingValue(0);
+                  setSubmissionStage(0);
+                }
               }}
+              isDisabled={submissionStage === 1}
             >
-              Submit
+              {submissionStage === 2 ? 'Close' : 'Submit'}
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -479,9 +479,6 @@ function App() {
                 if (submissionStage === 0) {
                   lol.current = true;
                   playGame();
-                  setTimeout(() => {
-                    setSubmissionStage(2);
-                  }, 5000);
                   setSubmissionStage(1);
                 } else if (submissionStage === 2) {
                   onClose();

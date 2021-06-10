@@ -1,11 +1,11 @@
 const conf = {
   tokenName: 'ETH',
   funderName: 'Kanav Gupta',
-  wager: '0.050',
+  wager: '0.100',
   funderWallet: '0xd7294984915d0eD101F7cAC74bfb84D361E1341c',
-  contractAddress: '0x4ba7Ed3f699A23b85d6E7E4ac2cF5672AfFAF75d',
+  contractAddress: '0x6f10a66745b66F1BF5424704586cEB6241b08F5b',
   ctcstring:
-    '{"address":"0x4ba7Ed3f699A23b85d6E7E4ac2cF5672AfFAF75d","creation_block":25315892,"transactionHash":"0x594536d82b7ab62b53073bfcbba7d5ffe2290ac0e927ac1cad1b6a7340f88f48"}',
+    '{"address":"0x6f10a66745b66F1BF5424704586cEB6241b08F5b","creation_block":25395100,"transactionHash":"0x3f63b0924c88f23276d9f2aa86c9177e7e384ade9658c579742857c1d0a290d9"}',
   code: "'reach 0.1';\n\nexport function bountyFunction(i) {\n  return i % 42;\n}\n",
   deadline: 1000,
   funderAccount: {
@@ -13,7 +13,11 @@ const conf = {
     provider: {
       _isProvider: true,
       _events: [],
-      _emitted: { block: -2 },
+      _emitted: {
+        block: 25395109,
+        't:0x3f63b0924c88f23276d9f2aa86c9177e7e384ade9658c579742857c1d0a290d9': 25395100,
+        't:0x05f5e0f25acafe5de3b0d71ae63c53b85eb73e7241f2c006ef9ebb7233ca38da': 25395106,
+      },
       formatter: {
         formats: {
           transaction: {},
@@ -28,10 +32,10 @@ const conf = {
       },
       anyNetwork: false,
       _networkPromise: {},
-      _maxInternalBlockNumber: -1024,
-      _lastBlockNumber: -2,
+      _maxInternalBlockNumber: 25395109,
+      _lastBlockNumber: 25395109,
       _pollingInterval: 4000,
-      _fastQueryDate: 0,
+      _fastQueryDate: 1623364542850,
       connection: { url: 'metamask' },
       _nextId: 42,
       provider: {
@@ -39,20 +43,13 @@ const conf = {
         _eventsCount: 1,
         _maxListeners: 100,
         _log: {
-          levels: {
-            TRACE: 0,
-            DEBUG: 1,
-            INFO: 2,
-            WARN: 3,
-            ERROR: 4,
-            SILENT: 5,
-          },
+          levels: { TRACE: 0, DEBUG: 1, INFO: 2, WARN: 3, ERROR: 4, SILENT: 5 },
         },
         isMetaMask: true,
         _state: {
           sentWarnings: {
             enable: false,
-            experimentalMethods: false,
+            experimentalMethods: true,
             send: false,
             events: {
               close: false,
@@ -79,6 +76,11 @@ const conf = {
       },
       _eventLoopCache: { detectNetwork: null },
       _network: { name: 'kovan', chainId: 42, ensAddress: null },
+      _poller: null,
+      _bootstrapPoll: null,
+      _internalBlockNumber: {},
+      _fastBlockNumber: 25395109,
+      _fastBlockNumberPromise: {},
     },
     _index: 0,
     _address: null,

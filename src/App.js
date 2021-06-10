@@ -77,6 +77,9 @@ const funderLink = isAlgo()
   : `https://${networkName}.etherscan.io/address/${funderWalletAddr}`;
 /// CONSTANTS END!!!
 
+var backend;
+var ctcContestant;
+
 function App() {
   var lol = useRef(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -88,8 +91,9 @@ function App() {
     myRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const code = config.code;
-  let ended = config.deadline - currentBlock + ctcObj.creationRound < 0;
+  let ended = config.deadline - currentBlock + contractBlock < 0;
   const [submissionStage, setSubmissionStage] = useState(0);
+  const [leaderboardArr, setLeaderboardArr] = useState([]);
 
   const playGame = () => {
     stdlib.getDefaultAccount().then(async acc => {
@@ -101,7 +105,7 @@ function App() {
           if (lol.current) {
             const value = submittingValue;
             console.log(`Contestant ${i} submitted ${value}`);
-            lol.current = false;
+            // lol.current = false;
             return ['Some', value];
           } else {
             return ['None', null];
@@ -121,9 +125,9 @@ function App() {
             `Contestant ${i} saw a bounty of ${bountyAmt} and deadline ${deadline}`
           );
         },
-        informSucc: succ => {
+        informSuccess: succ => {
           console.log('informSucc');
-          lol.current = false;
+          // lol.current = false;
           setSubmissionStage(2);
         },
         // shouldSubmitValue: () => {
@@ -131,21 +135,45 @@ function App() {
         // }
       });
 
-      var host = window.location.host;
-      var subdomain = host.split('.')[0];
-      const backend = await import(
-        /* webpackIgnore: true */
-        `https://optymtech.github.io/reachci/${subdomain}/build/index.main.mjs`
-      );
       console.log(ctcObj);
-      const ctcContestant = acc.attach(backend, ctcObj);
       console.log(ctcContestant);
-      backend.Contestant(ctcContestant, Contestant(69));
-      console.log('hello 2');
+      backend.Contestant(ctcContestant, Contestant(69)).catch(error => {
+        console.log('erroring');
+        lol.current = true;
+      });
     });
   };
 
+  const myFunction = async () => {
+    let acc = await stdlib.getDefaultAccount();
+    var host = window.location.host;
+    var subdomain = host.split('.')[0];
+    backend = await import(
+      /* webpackIgnore: true */
+      `https://optymtech.github.io/reachci/${subdomain}/build/index.main.mjs`
+    );
+    ctcContestant = acc.attach(backend, ctcObj);
+
+    ctcContestant
+      .getViews()
+      .Leaderboard.leaderboard()
+      .then(leaderboard => {
+        if (leaderboard[0] === 'Some') {
+          // leaderboard[1].forEach((element, i) => {
+          //   console.log(
+          //     `${i}: ${element.accountAddress} ${element.returnValue} ${element.inputValue} ${element.timestamp}`
+          //   );
+          // });
+          setLeaderboardArr(leaderboard[1]);
+          console.log(leaderboard[1]);
+        } else {
+          console.log(`undefined leaderboard`);
+        }
+      });
+  };
+
   useEffect(() => {
+    myFunction();
     const interval = setInterval(() => {
       if (tokenName === 'ALGO') {
         fetch(`https://${networkName}.algoexplorerapi.io/v2/status`)
@@ -229,6 +257,10 @@ function App() {
                   _hover={{
                     bg: 'green.500',
                   }}
+                  onClick={() => {
+                    lol.current = true;
+                    playGame();
+                  }}
                 >
                   Transfer money to winner
                 </Button>
@@ -273,55 +305,20 @@ function App() {
               <Thead>
                 <Tr>
                   <Th isNumeric>Rank</Th>
-                  <Th>Name</Th>
+                  <Th>Wallet</Th>
                   <Th isNumeric>Input</Th>
                   <Th isNumeric>Output</Th>
-                  <Th>Submission time</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td isNumeric>1</Td>
-                  <Td>Kanav Gupta</Td>
-                  <Td isNumeric>5</Td>
-                  <Td isNumeric>2898</Td>
-                  <Td>25 May 2021 17:40</Td>
-                </Tr>
-                <Tr>
-                  <Td isNumeric>2</Td>
-                  <Td>Kanav Gupta</Td>
-                  <Td isNumeric>5</Td>
-                  <Td isNumeric>2898</Td>
-                  <Td>25 May 2021 17:40</Td>
-                </Tr>
-                <Tr>
-                  <Td isNumeric>3</Td>
-                  <Td>Kanav Gupta</Td>
-                  <Td isNumeric>5</Td>
-                  <Td isNumeric>2898</Td>
-                  <Td>25 May 2021 17:40</Td>
-                </Tr>
-                <Tr>
-                  <Td isNumeric>4</Td>
-                  <Td>Kanav Gupta</Td>
-                  <Td isNumeric>5</Td>
-                  <Td isNumeric>2898</Td>
-                  <Td>25 May 2021 17:40</Td>
-                </Tr>
-                <Tr>
-                  <Td isNumeric>5</Td>
-                  <Td>Kanav Gupta</Td>
-                  <Td isNumeric>5</Td>
-                  <Td isNumeric>2898</Td>
-                  <Td>25 May 2021 17:40</Td>
-                </Tr>
-                <Tr>
-                  <Td isNumeric>6</Td>
-                  <Td>Kanav Gupta</Td>
-                  <Td isNumeric>5</Td>
-                  <Td isNumeric>2898</Td>
-                  <Td>25 May 2021 17:40</Td>
-                </Tr>
+                {leaderboardArr.map((x, i) => (
+                  <Tr>
+                    <Td isNumeric>{i + 1}</Td>
+                    <Td>{x.accountAddress.substr(0, 10) + '...'}</Td>
+                    <Td isNumeric>{parseInt(x.inputValue._hex, 16)}</Td>
+                    <Td isNumeric>{parseInt(x.returnValue._hex, 16)}</Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </Box>

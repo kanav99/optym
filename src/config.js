@@ -1,4 +1,5 @@
 const conf = {
+  tokenName: 'ETH',
   funderName: 'Kanav Gupta',
   wager: '0.050',
   funderWallet: '0xd7294984915d0eD101F7cAC74bfb84D361E1341c',

@@ -45,7 +45,7 @@ import { Logo } from './Logo';
 
 import config from './config';
 
-const tokenName = 'ETH';
+const tokenName = config.tokenName;
 const stdlib = loadStdlib(tokenName);
 
 const isAlgo = () => tokenName === 'ALGO';

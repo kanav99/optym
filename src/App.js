@@ -124,6 +124,7 @@ function App() {
         informSucc: succ => {
           console.log('informSucc');
           lol.current = false;
+          setSubmissionStage(2);
         },
         // shouldSubmitValue: () => {
         //     return Math.random() < 0.1;

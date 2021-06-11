@@ -127,7 +127,7 @@ function App() {
         },
         informSuccess: succ => {
           console.log('informSucc');
-          // lol.current = false;
+          lol.current = false;
           setSubmissionStage(2);
         },
         // shouldSubmitValue: () => {

@@ -152,7 +152,7 @@ function App() {
   const myFunction = async () => {
     let acc = await stdlib.getDefaultAccount();
     var host = window.location.host;
-    var subdomain = 'ethexample5'; //host.split('.')[0];
+    var subdomain = host.split('.')[0];
     backend = await import(
       /* webpackIgnore: true */
       `https://optymtech.github.io/reachci/${subdomain}/build/index.main.mjs`

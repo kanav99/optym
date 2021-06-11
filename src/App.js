@@ -79,6 +79,7 @@ const funderLink = isAlgo()
 
 var backend;
 var ctcContestant;
+let ctcMonitor;
 
 function App() {
   var lol = useRef(false);
@@ -96,7 +97,9 @@ function App() {
   const [leaderboardArr, setLeaderboardArr] = useState([]);
 
   const playGame = () => {
+    setSubmissionStage(0);
     stdlib.getDefaultAccount().then(async acc => {
+      ctcContestant = acc.attach(backend, ctcObj);
       const Contestant = i => ({
         // Who: `Contestant ${i}`,
         // ...Common,
@@ -126,10 +129,10 @@ function App() {
           );
         },
         informSuccess: succ => {
+          console.log(succ);
           if (succ) {
             console.log('informSucc');
-            lol.current = false;
-            setSubmissionStage(2);
+            // lol.current = false;
           }
         },
         // shouldSubmitValue: () => {
@@ -149,12 +152,28 @@ function App() {
   const myFunction = async () => {
     let acc = await stdlib.getDefaultAccount();
     var host = window.location.host;
-    var subdomain = host.split('.')[0];
+    var subdomain = 'ethexample5'; //host.split('.')[0];
     backend = await import(
       /* webpackIgnore: true */
       `https://optymtech.github.io/reachci/${subdomain}/build/index.main.mjs`
     );
-    ctcContestant = acc.attach(backend, ctcObj);
+    ctcMonitor = acc.attach(backend, ctcObj);
+
+    const Monitor = i => ({
+      seeSubmission: (addr, input, output) => {
+        var newLeaderboardArr = leaderboardArr;
+        newLeaderboardArr.push({
+          inputValue: input._hex,
+          returnValue: output._hex,
+          accountAddress: addr,
+        });
+        lol.current = false;
+        setSubmissionStage(2);
+        setLeaderboardArr(newLeaderboardArr);
+      },
+    });
+
+    backend.Monitor(ctcMonitor, Monitor(69));
 
     // ctcContestant
     //   .getViews()
@@ -172,7 +191,6 @@ function App() {
     //       console.log(`undefined leaderboard`);
     //     }
     //   });
-
   };
 
   useEffect(() => {
@@ -318,8 +336,8 @@ function App() {
                   <Tr>
                     <Td isNumeric>{i + 1}</Td>
                     <Td>{x.accountAddress.substr(0, 10) + '...'}</Td>
-                    <Td isNumeric>{parseInt(x.inputValue._hex, 16)}</Td>
-                    <Td isNumeric>{parseInt(x.returnValue._hex, 16)}</Td>
+                    <Td isNumeric>{parseInt(x.inputValue, 16)}</Td>
+                    <Td isNumeric>{parseInt(x.returnValue, 16)}</Td>
                   </Tr>
                 ))}
               </Tbody>

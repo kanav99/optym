@@ -126,9 +126,11 @@ function App() {
           );
         },
         informSuccess: succ => {
-          console.log('informSucc');
-          lol.current = false;
-          setSubmissionStage(2);
+          if (succ) {
+            console.log('informSucc');
+            lol.current = false;
+            setSubmissionStage(2);
+          }
         },
         // shouldSubmitValue: () => {
         //     return Math.random() < 0.1;
@@ -154,22 +156,23 @@ function App() {
     );
     ctcContestant = acc.attach(backend, ctcObj);
 
-    ctcContestant
-      .getViews()
-      .Leaderboard.leaderboard()
-      .then(leaderboard => {
-        if (leaderboard[0] === 'Some') {
-          // leaderboard[1].forEach((element, i) => {
-          //   console.log(
-          //     `${i}: ${element.accountAddress} ${element.returnValue} ${element.inputValue} ${element.timestamp}`
-          //   );
-          // });
-          setLeaderboardArr(leaderboard[1]);
-          console.log(leaderboard[1]);
-        } else {
-          console.log(`undefined leaderboard`);
-        }
-      });
+    // ctcContestant
+    //   .getViews()
+    //   .Leaderboard.leaderboard()
+    //   .then(leaderboard => {
+    //     if (leaderboard[0] === 'Some') {
+    //       // leaderboard[1].forEach((element, i) => {
+    //       //   console.log(
+    //       //     `${i}: ${element.accountAddress} ${element.returnValue} ${element.inputValue} ${element.timestamp}`
+    //       //   );
+    //       // });
+    //       setLeaderboardArr(leaderboard[1]);
+    //       console.log(leaderboard[1]);
+    //     } else {
+    //       console.log(`undefined leaderboard`);
+    //     }
+    //   });
+
   };
 
   useEffect(() => {

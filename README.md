@@ -21,6 +21,8 @@ Optym makes the complete process of hosting smooth and easy.
 
 ## Deployment Pipeline
 
+Deployment pipeline of Optym Contests is a unique one - it **requires no custom servers**. It builds all the steps using GitHub Actions and deploys on Netlify. We use GitHub Secrets and Netlify Serverless Functions to maintain push and deploy access respectively, hence, unauthorized people cannot make unsolicited deploys.
+
 ![pipeline](https://user-images.githubusercontent.com/33966400/121770831-57448b00-cb89-11eb-952b-3c6a42a68c00.png)
 
 ## Repositories

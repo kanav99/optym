@@ -1,5 +1,15 @@
 # Optym: Optimization market contests on Blockchain
 
+# Problem Statement
+
+Suppose a funder F wants to optimize a function's return value. Let's say the function `f` takes as input an unsigned integer and outputs an unsigned integer. They want to find an `x` such that `f(x)` is maximized. This can be an NP-Hard problem, so solving this can make them brute force the entire domain to find a solution, which might not be feasible. So to distribute this problem, the Funder can host this function as a bounty and can announce that the person to maximize this function gets a certain prize. As the funder can chicken out after getting the best values, the application needs to be deployed using smart-contracts, which prevents the funder from cheating.
+
+Optym makes the complete process of hosting smooth and easy.
+
+## Deployment Pipeline
+
+![pipeline](https://user-images.githubusercontent.com/33966400/121770831-57448b00-cb89-11eb-952b-3c6a42a68c00.png)
+
 ## Repositories
 
 * [optymtech/optym](https://github.com/optymtech/optym) - This is the react application which gets deployed for each contest at `https://<subdomain>.optym.tech` on a successful creation of contest on the landing page. The application interacts with [optymtech/reachci](https://github.com/optymtech/reachci) to fetch it's reach backend according to it's subdomain. It needs a `src/config.js` file which needs to be edited for each contest. More details about this config in coming sections.

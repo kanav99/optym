@@ -1,68 +1,9 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Optym: Optimization market contests on Blockchain
 
-## Available Scripts
+## Repositories
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+* [optymtech/optym](https://github.com/optymtech/optym) - This is the react application which gets deployed for each contest at `https://<subdomain>.optym.tech` on a successful creation of contest on the landing page. The application interacts with [optymtech/reachci](https://github.com/optymtech/reachci) to fetch it's reach backend according to it's subdomain. It needs a `src/config.js` file which needs to be edited for each contest. More details about this config in coming sections.
+* [optymtech/optym-website](https://github.com/optymtech/optym-website) - This is the netlify source code for the landing page at https://optym.tech. On successful submission of a form at `/new`, the bounty code is pushed to [optymtech/reachci](https://github.com/optymtech/reachci) for compilation and optym `config.js` is generated and pushed to [optymtech/registry](https://github.com/optymtech/registry) for static website deployment.
+* [optymtech/reachci](https://github.com/optymtech/reachci) - This is the repository where bounty function is stored along with our backend code. On each push, the code is compiled on GitHub actions and compiled backend is hosted on the `gh-pages` for the static webpage to get.
+* [optymtech/optym-cli](https://github.com/optymtech/optym-cli) - Test program containing a CLI frontend which simulates a contest on the Devnet. 
+* [optymtech/registry](https://github.com/optymtech/registry) - After the reach code is compiled for a subdomain, the configuration for a website is generated and pushed to this repository. On push, we use GitHub Actions to build React page and deploy it using Netlify on the subdomain.

@@ -10,7 +10,7 @@ Website: <a href="https://optym.tech">https://optym.tech</a>
 
 
 <p align="center">
-Reach Backend: <a href="https://github.com/optymtech/reachci/blob/main/index.rsh">index.rsh</a>
+Reach Backend: <a href="https://github.com/optymtech/optym-cli/blob/master/index.rsh">index.rsh</a>
 </p>
 
 ## Problem Statement
